@@ -1,11 +1,10 @@
 from flask import Flask, send_file, request, jsonify
-from catboost import CatBoostRegressor, CatBoostError
+from catboost import CatBoostRegressor, CatBoostError, CatBoost
 import os
 
 app = Flask(__name__)
 
-model = CatBoostRegressor()
-model.load_model('car_price_predict')
+model = CatBoost().load_model('car_price_predict')
 
 
 @app.route("/help")
