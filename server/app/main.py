@@ -19,13 +19,13 @@ def predict_car_price():
 	content = request.get_json()
 	try:
 		event_dict = {
-			'event_manufacturer_name': content['manufacturer_name'],
-			'event_model_name': content['model_name'],
-			'event_body_type': content['body_type'],
-			'event_transmission': content['transmission'],
-			'event_engine_fuel': content['engine_fuel'],
-			'event_drivetrain': content['drivetrain'],
-			'event_color': content['color'],
+			'event_manufacturer_name': content['manufacturer_name'].lower(),
+			'event_model_name': content['model_name'].lower(),
+			'event_body_type': content['body_type'].lower(),
+			'event_transmission': content['transmission'].lower(),
+			'event_engine_fuel': content['engine_fuel'].lower(),
+			'event_drivetrain': content['drivetrain'].lower(),
+			'event_color': content['color'].lower(),
 			'event_year_produced': content['year_produced'],
 			'event_engine_capacity': content['engine_capacity'],
 			'event_engine_power': content['engine_power'],
