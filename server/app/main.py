@@ -10,8 +10,8 @@ model.load_model('car_price_predict')
 
 @app.route("/help")
 def main():
-    index_path = os.path.join(app.static_folder, "index.html")
-    return send_file(index_path)
+	index_path = os.path.join(app.static_folder, "index.html")
+	return send_file(index_path)
 
 @app.route("/predict_car_price", methods=['POST'])
 def predict_car_price():
@@ -38,7 +38,19 @@ def predict_car_price():
 			'error': 'Please provide correct JSON as shown in description (GET /help)'
 			}), 422
 	try:
-		event_prediction = model.predict([x for x in event_dict.values()])
+		event_prediction = model.predict([
+			event_dict['event_manufacturer_name'],
+			event_dict['event_model_name'],
+			event_dict['event_body_type'],
+			event_dict['event_transmission'],
+			event_dict['event_engine_fuel'],
+			event_dict['event_drivetrain'],
+			event_dict['event_color'],
+			event_dict['event_year_produced'],
+			event_dict['event_engine_capacity'],
+			event_dict['event_engine_power'],
+			event_dict['event_odometer_value']
+		])
 		return jsonify({
 						'predicted_price': round(event_prediction**2)
 					}), 200
