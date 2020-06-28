@@ -1,0 +1,32 @@
+version: '3.3'
+services:
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: rabbitmq
+        hostname: rabbitmq
+        restart: always
+        ports:
+            - 5672:5672
+            - 15672:15672
+
+    features:
+        build:
+            context: ./features
+        restart: always
+        depends_on:
+              - rabbitmq
+
+    consume:
+        build:
+            context: ./consume
+        restart: always
+        depends_on:
+              - rabbitmq
+    
+    server:
+        build:
+            context: ./server
+        restart: always
+        ports:
+            - 80:80
+
