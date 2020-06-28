@@ -1,5 +1,5 @@
 from flask import Flask, send_file, request, jsonify
-from catboost import CatBoostRegressor
+from catboost import CatBoostRegressor, CatBoostError
 import os
 
 app = Flask(__name__)
@@ -8,19 +8,48 @@ model = CatBoostRegressor()
 model.load_model('car_price_predict')
 
 
-@app.route("/")
+@app.route("/help")
 def main():
     index_path = os.path.join(app.static_folder, "index.html")
     return send_file(index_path)
 
 @app.route("/predict_car_price", methods=['POST'])
 def predict_car_price():
-	if not request.is_json():
+	if not request.is_json:
 		return 
 	content = request.get_json()
-	print(content)
-	return 'True'
+	try:
+		event_dict = {
+			'event_manufacturer_name': content['manufacturer_name'],
+			'event_model_name': content['model_name'],
+			'event_body_type': content['body_type'],
+			'event_transmission': content['transmission'],
+			'event_engine_fuel': content['engine_fuel'],
+			'event_drivetrain': content['drivetrain'],
+			'event_color': content['color'],
+			'event_year_produced': content['year_produced'],
+			'event_engine_capacity': content['engine_capacity'],
+			'event_engine_power': content['engine_power'],
+			'event_odometer_value': content['odometer_value']
+		}
+	except KeyError:
+		return jsonify({
+			'error': 'Please provide correct JSON as shown in description (GET /help)'
+			}), 422
 
+	try:
+		event_prediction = model.predict([x for x in event_dict.values()])
+		return jsonify({
+						'predicted_price': round(event_prediction**2)
+					}), 200
+	except CatBoostError:
+		return jsonify({
+						'error': 'Something wrong with your data values. Please check method description (GET /help).'
+					}), 422
+
+	return jsonify({
+					'error': 'Something went wrong plese try again'
+				}), 418
 
 
 if __name__ == '__main__':
