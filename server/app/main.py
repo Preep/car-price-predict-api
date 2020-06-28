@@ -32,17 +32,18 @@ def predict_car_price():
 			'event_engine_power': content['engine_power'],
 			'event_odometer_value': content['odometer_value']
 		}
-	except KeyError:
+	except KeyError as e:
+		print(e)
 		return jsonify({
 			'error': 'Please provide correct JSON as shown in description (GET /help)'
 			}), 422
-
 	try:
 		event_prediction = model.predict([x for x in event_dict.values()])
 		return jsonify({
 						'predicted_price': round(event_prediction**2)
 					}), 200
-	except CatBoostError:
+	except CatBoostError as e:
+		print(e)
 		return jsonify({
 						'error': 'Something wrong with your data values. Please check method description (GET /help).'
 					}), 422
